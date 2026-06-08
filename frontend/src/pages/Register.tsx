@@ -10,7 +10,6 @@ export const Register: React.FC<RegisterProps> = ({ onToggleView }) => {
   const { register, clearError } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('USER');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -32,7 +31,7 @@ export const Register: React.FC<RegisterProps> = ({ onToggleView }) => {
 
     setLoading(true);
     try {
-      await register(email, password, role);
+      await register(email, password);
       setMessage({ type: 'success', text: 'Registration successful! Redirecting to login...' });
       
       // Delay transitioning back to login screen to let the user see the success message
@@ -61,7 +60,7 @@ export const Register: React.FC<RegisterProps> = ({ onToggleView }) => {
           <span style={{ fontSize: '3rem' }}>🛡️</span>
           <h2 style={{ fontSize: '1.8rem', marginTop: '0.5rem', fontWeight: 800 }} className="glow-text">Create Account</h2>
           <p style={{ fontSize: '0.875rem', color: 'hsl(var(--text-secondary))', marginTop: '0.25rem' }}>
-            Register to join the secure task environment
+            Register to join the secure task environment. All new accounts are created as standard users. Administrator access can only be granted by an existing administrator.
           </p>
         </div>
 
@@ -89,7 +88,7 @@ export const Register: React.FC<RegisterProps> = ({ onToggleView }) => {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group" style={{ marginBottom: '2rem' }}>
             <label className="form-label" htmlFor="reg-password">Password</label>
             <input
               id="reg-password"
@@ -101,21 +100,6 @@ export const Register: React.FC<RegisterProps> = ({ onToggleView }) => {
               disabled={loading}
               required
             />
-          </div>
-
-          {/* Role selection toggle (included to make testing both paths trivial for evaluators) */}
-          <div className="form-group" style={{ marginBottom: '2rem' }}>
-            <label className="form-label" htmlFor="reg-role">Default Access Role</label>
-            <select
-              id="reg-role"
-              className="form-input"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              disabled={loading}
-            >
-              <option value="USER">Regular User (Ordinary Access)</option>
-              <option value="ADMIN">Administrator (Full Access)</option>
-            </select>
           </div>
 
           <button

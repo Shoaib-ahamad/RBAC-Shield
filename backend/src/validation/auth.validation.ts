@@ -18,7 +18,6 @@ export const registerSchema = z.object({
     // Rejects too long passwords before passing to bcrypt
     .max(72, "Password cannot exceed 72 characters"),
     
-    role: z.enum(["USER", "ADMIN"]).default("USER")
   })
 });
 

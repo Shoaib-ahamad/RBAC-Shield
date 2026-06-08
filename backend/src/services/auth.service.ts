@@ -26,7 +26,7 @@ export class AuthService {
   }
 
   // Handles registration of new users
-  public static async register(email: string, passwordPlain: string, role: string) {
+  public static async register(email: string, passwordPlain: string) {
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       throw new ConflictError("Email address is already registered");
@@ -35,12 +35,12 @@ export class AuthService {
     // Hash the password (Cost factor 12)
     const passwordHash = await bcrypt.hash(passwordPlain, 12);
 
-    // Save to PostgreSQL/SQLite
+    // Save to PostgreSQL/SQLite - strictly hardcoded to USER role
     const user = await prisma.user.create({
       data: {
         email,
         passwordHash,
-        role: role.toUpperCase() // Ensure upper-case consistency
+        role: 'USER'
       },
       select: {
         id: true,
