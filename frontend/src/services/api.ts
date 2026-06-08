@@ -13,8 +13,10 @@ export const registerLogoutCallback = (callback: () => void) => {
   logoutCallback = callback;
 };
 
+const baseURL = (import.meta as any).env.VITE_API_URL || '/api/v1';
+
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL,
   withCredentials: true // Transmit HTTP-Only cookies (refreshToken) with every request
 });
 
@@ -41,7 +43,7 @@ api.interceptors.response.use(
 
       try {
         // Call refresh endpoint to rotate cookies and get a new access token
-        const { data } = await axios.post('/api/v1/auth/refresh', {}, { withCredentials: true });
+        const { data } = await axios.post(`${baseURL}/auth/refresh`, {}, { withCredentials: true });
         
         // Save the new access token in memory
         setLocalAccessToken(data.accessToken);

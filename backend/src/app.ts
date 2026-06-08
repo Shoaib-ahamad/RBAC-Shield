@@ -20,8 +20,25 @@ app.use(helmet({
 }));
 
 // 2. Cross-Origin Resource Sharing (CORS) Configuration
+const allowedOrigins = env.CORS_ORIGINS.split(',').map(o => o.trim());
+
 app.use(cors({
-  origin: ['http://localhost:3000'], // Match react-vite frontend domain
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, or swagger Try it Out on same host)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      return callback(null, true);
+    }
+    
+    // Support dynamic Vercel preview/production deployments
+    const isVercel = /\.vercel\.app$/.test(origin);
+    if (isVercel) {
+      return callback(null, true);
+    }
+    
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true, // Allow cookie exchange across client requests
   exposedHeaders: ['X-Total-Count'] // Expose page pagination headers to client
 }));

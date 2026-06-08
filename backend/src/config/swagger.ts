@@ -19,8 +19,8 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: `http://localhost:${env.PORT}/api/v1`,
-        description: 'Local development server'
+        url: `${env.APP_URL}/api/v1`,
+        description: env.NODE_ENV === 'production' ? 'Production server' : 'Development server'
       }
     ],
     components: {
@@ -51,6 +51,6 @@ export function setupSwagger(app: Express) {
   });
 
   const { logger } = require('../utils/logger'); // Avoid circular imports
-  logger.info(`📖 API Documentation available at http://localhost:${env.PORT}/api-docs`);
+  logger.info(`📖 API Documentation available at ${env.APP_URL}/api-docs`);
 }
 export { swaggerSpec };

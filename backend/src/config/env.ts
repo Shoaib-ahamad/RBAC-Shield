@@ -7,7 +7,13 @@ dotenv.config();
 
 // Define schema validation for environment variables
 const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  NODE_ENV: z.string().default('development').transform(val => {
+    const lower = val.toLowerCase().trim();
+    if (['development', 'production', 'test'].includes(lower)) {
+      return lower as 'development' | 'production' | 'test';
+    }
+    return 'development';
+  }),
   PORT: z.coerce.number().default(5000),
   DATABASE_URL: z.string({
     required_error: "DATABASE_URL is required"
@@ -19,6 +25,8 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string({
     required_error: "JWT_REFRESH_SECRET is required"
   }).min(10, "JWT_REFRESH_SECRET must be at least 10 characters long"),
+  APP_URL: z.string().optional(),
+  CORS_ORIGINS: z.string().default('http://localhost:3000,http://localhost:5173'),
 });
 
 // Parse process.env and throw formatting errors if invalid
@@ -29,4 +37,9 @@ if (!parsed.success) {
   process.exit(1);
 }
 
-export const env = parsed.data;
+// Export parsed variables with dynamic fallback for APP_URL
+export const env = {
+  ...parsed.data,
+  APP_URL: parsed.data.APP_URL || `http://localhost:${parsed.data.PORT}`
+};
+
