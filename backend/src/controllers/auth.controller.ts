@@ -49,7 +49,8 @@ export class AuthController {
       const token = req.cookies?.refreshToken || req.body.refreshToken;
 
       if (!token) {
-        return res.status(401).json({ error: "Refresh token is missing" });
+        // Return 200 OK with authenticated: false to avoid console 401 warnings
+        return res.status(200).json({ authenticated: false });
       }
 
       const result = await AuthService.refresh(token);
@@ -63,6 +64,7 @@ export class AuthController {
       });
 
       return res.status(200).json({
+        authenticated: true,
         accessToken: result.accessToken,
         user: result.user
       });

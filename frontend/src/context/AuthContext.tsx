@@ -41,12 +41,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const checkActiveSession = async () => {
       try {
         const { data } = await api.post('/auth/refresh');
-        setLocalAccessToken(data.accessToken);
-        setUser(data.user);
-        setIsAuthenticated(true);
+        if (data.authenticated) {
+          setLocalAccessToken(data.accessToken);
+          setUser(data.user);
+          setIsAuthenticated(true);
+        } else {
+          setLocalAccessToken(null);
+          setUser(null);
+          setIsAuthenticated(false);
+        }
       } catch {
-        // No active session cookie found; user remains unauthenticated
+        // Hard errors (e.g. invalid signature, blacklist)
         setLocalAccessToken(null);
+        setUser(null);
+        setIsAuthenticated(false);
       } finally {
         setLoading(false);
       }
