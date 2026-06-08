@@ -15,8 +15,16 @@ const app: Express = express();
 
 // 1. Security Headers Middleware (Helmet)
 app.use(helmet({
-  // Adjust content security policies if swagger resources require external styles
-  contentSecurityPolicy: env.NODE_ENV === 'production' ? undefined : false
+  // Adjust content security policies to allow Swagger UI resources in production
+  contentSecurityPolicy: env.NODE_ENV === 'production' ? {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "validator.swagger.io"],
+    }
+  } : false
 }));
 
 // 2. Cross-Origin Resource Sharing (CORS) Configuration
@@ -80,6 +88,21 @@ app.get('/api/v1/health', (req, res) => {
   return res.status(200).json({
     status: 'healthy',
     timestamp: new Date().toISOString()
+  });
+});
+
+// Redirect root domain to the Swagger UI API documentation
+app.get('/', (req, res) => {
+  return res.redirect('/api-docs');
+});
+
+// Root API version metadata info endpoint
+app.get('/api/v1', (req, res) => {
+  return res.status(200).json({
+    name: 'Scalable REST API with RBAC',
+    version: '1.0.0',
+    docs: `${env.APP_URL}/api-docs`,
+    health: `${env.APP_URL}/api/v1/health`
   });
 });
 
