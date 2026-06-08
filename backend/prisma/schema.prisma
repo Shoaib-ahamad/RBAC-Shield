@@ -1,0 +1,48 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql" // Can be changed to "sqlite" for local fallback
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User model represents users who can authenticate and own/be assigned tasks
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("USER") // Role levels: "USER" or "ADMIN"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relations: One user can create many tasks, and can be assigned many tasks
+  tasksCreated  Task[] @relation("CreatedTasks")
+  tasksAssigned Task[] @relation("AssignedTasks")
+
+  @@index([email]) // Index email for rapid lookup during login
+}
+
+// Task model represents the secondary entity for CRUD
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  status      String   @default("PENDING") // Statuses: "PENDING", "IN_PROGRESS", "COMPLETED"
+  version     Int      @default(1) // Used for Optimistic Concurrency Control (OCC)
+  
+  // Relations: creator is required, assignee is optional
+  createdById String
+  createdBy   User     @relation("CreatedTasks", fields: [createdById], references: [id], onDelete: Cascade)
+  
+  assignedToId String?
+  assignedTo   User?    @relation("AssignedTasks", fields: [assignedToId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdById])
+  @@index([assignedToId])
+}
