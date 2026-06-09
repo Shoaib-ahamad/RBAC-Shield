@@ -1,95 +1,236 @@
 # 🛡️ Secure RBAC & Task Management System
 
-This repository contains a production-ready, highly secure REST API with Role-Based Access Control (RBAC) and a supportive React Single-Page Application (SPA) dashboard. 
+A production-ready full-stack application demonstrating secure authentication, authorization, Role-Based Access Control (RBAC), task management, and modern deployment practices.
 
-The application is built to demonstrate secure JWT handling, refresh token rotation, input validation, optimistic concurrency control, and modular architecture.
-
----
-
-## 🚀 Quick Start (Docker Compose)
-
-The easiest way to spin up the entire environment (PostgreSQL, Redis, Express API, and React Client) is using Docker Compose.
-
-### Prerequisites
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
-
-### Spin up the services
-From the root directory, run:
-```bash
-docker compose up --build
-```
-
-Once execution completes:
-- 🖥️ **Frontend Client**: http://localhost:3000
-- 🔌 **Backend API**: http://localhost:5000/api/v1
-- 📖 **Swagger API Docs**: http://localhost:5000/api-docs
+This project was built to explore how real-world applications handle authentication, authorization, session management, security, and scalability while maintaining a clean and modular architecture.
 
 ---
 
-## 🛠️ Local Startup (Without Docker)
+# 🌐 Live Demo
 
-For easy evaluation, the application includes a **complete fallback system**. If PostgreSQL or Redis are not detected, the API will automatically switch to **SQLite** (local file database) and an **in-memory cache wrapper**.
+### Frontend Application
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18+ recommended) installed.
+https://rbac-shield.vercel.app
 
-### 1. Setup Backend
-```bash
-cd backend
-npm install
-```
+### Backend API
 
-Create a `.env` file inside the `backend` folder:
-```env
-PORT=5000
-NODE_ENV=development
-# For SQLite, use this database URL
-DATABASE_URL="file:./dev.db"
-# JWT Secrets
-JWT_ACCESS_SECRET="super_secret_access_key_123_abc_xyz"
-JWT_REFRESH_SECRET="super_secret_refresh_key_123_abc_xyz"
-```
+https://rbac-shield.onrender.com/api/v1
 
-Configure the database, run migrations, and seed initial data:
-```bash
-# Update schema provider to sqlite (edit backend/prisma/schema.prisma)
-# Change line 4: provider = "postgresql" -> provider = "sqlite"
+### Swagger Documentation
 
-npx prisma migrate dev --name init
-npx prisma db seed
-npm run dev
-```
-
-### 2. Setup Frontend
-In a new terminal window:
-```bash
-cd frontend
-npm install
-npm run dev
-```
-Open your browser to http://localhost:3000.
+https://rbac-shield.onrender.com/api-docs
 
 ---
 
-## 🔑 Test Accounts (Seeded)
+# 🎯 Project Overview
 
-The database seeder provisions two standard accounts:
+This project implements a complete Role-Based Access Control (RBAC) system with secure JWT authentication and task management capabilities.
 
-1. ⚙️ **Administrator Account**:
-   - **Email**: `admin@system.com`
-   - **Password**: `AdminPass123`
-   - *Clearance*: Full CRUD on all tasks, view registered users list, demote/promote users.
+The application demonstrates:
 
-2. 👥 **Ordinary User Account**:
-   - **Email**: `user@system.com`
-   - **Password**: `UserPass123`
-   - *Clearance*: CRUD on tasks they create, assign tasks to themselves, blocked from viewing user lists or accessing `/admin`.
+* Secure Authentication & Authorization
+* Role-Based Access Control (RBAC)
+* JWT Access & Refresh Tokens
+* Refresh Token Rotation
+* Secure HTTP-Only Cookie Handling
+* Input Validation & Validation Pipelines
+* Optimistic Concurrency Control (OCC)
+* API Documentation using Swagger
+* Production Deployment
+* Scalable Backend Architecture
 
 ---
 
-## 📁 Repository Structure
+# ✨ Features
 
+## Authentication & Authorization
+
+* User Registration
+* User Login & Logout
+* JWT Authentication
+* Access Token Expiration
+* Refresh Token Rotation
+* Session Restoration
+* Secure Password Hashing
+* HTTP-Only Refresh Token Cookies
+* Role-Based Route Protection
+
+## Task Management
+
+* Create Tasks
+* View Tasks
+* Update Tasks
+* Delete Tasks
+* Assign Tasks
+* Task Status Tracking
+* Ownership Validation
+* Pagination & Filtering
+
+## Administration
+
+* View Registered Users
+* Promote Users
+* Demote Users
+* Prevent Self-Demotion
+* Manage System-Wide Resources
+
+## Security
+
+* Password Hashing using bcrypt
+* JWT Access Tokens
+* Refresh Token Rotation
+* Secure Cookies
+* Rate Limiting
+* Input Validation
+* RBAC Enforcement
+* Optimistic Concurrency Control
+* Centralized Error Handling
+
+---
+
+# 🔐 RBAC Model
+
+The system follows a Role-Based Access Control (RBAC) architecture.
+
+## USER
+
+Permissions:
+
+* Create Tasks
+* View Own Tasks
+* Update Own Tasks
+* Delete Own Tasks
+* Manage Personal Workflows
+
+## ADMIN
+
+Permissions:
+
+* Manage All Tasks
+* View All Users
+* Promote Users
+* Demote Users
+* Access Administrative Endpoints
+
+### Security Rule
+
+Newly registered accounts are always assigned the `USER` role by the backend.
+
+Administrative privileges can only be granted by an existing administrator.
+
+This prevents privilege escalation through client-side manipulation.
+
+---
+
+# 🏗️ System Architecture
+
+```text
+┌─────────────────────────┐
+│ React + TypeScript SPA  │
+│        (Vercel)         │
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│ Express.js REST API     │
+│        (Render)         │
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│ PostgreSQL Database     │
+│       (Supabase)        │
+└─────────────────────────┘
 ```
+
+---
+
+# 🛠️ Tech Stack
+
+## Frontend
+
+* React
+* TypeScript
+* Vite
+* Axios
+* Context API
+* Vanilla CSS
+
+## Backend
+
+* Node.js
+* Express.js
+* TypeScript
+* Prisma ORM
+* JWT
+* bcryptjs
+* Zod
+
+## Database
+
+* PostgreSQL
+* SQLite (Local Fallback)
+
+## DevOps & Deployment
+
+* Docker
+* Render
+* Vercel
+* Supabase
+* GitHub
+
+---
+
+# 🔑 Test Accounts
+
+The application includes seeded accounts for evaluation.
+
+## Administrator Account
+
+Email:
+
+```text
+admin@system.com
+```
+
+Password:
+
+```text
+AdminPass123
+```
+
+Permissions:
+
+* Full CRUD on all tasks
+* User management
+* Role management
+
+---
+
+## Standard User Account
+
+Email:
+
+```text
+user@system.com
+```
+
+Password:
+
+```text
+UserPass123
+```
+
+Permissions:
+
+* CRUD on owned tasks only
+* No administrative access
+
+---
+
+# 📁 Repository Structure
+
+```text
 rbac-system/
 ├── docker-compose.yml          # Multi-container orchestration
 ├── SCALABILITY.md             # Theoretical guide for large-scale operations
@@ -121,11 +262,230 @@ rbac-system/
 
 ---
 
-## 🛡️ Security Rationale & Implemented Rules
+# 🚀 Quick Start (Docker Compose)
 
-1. **Password Hashing**: Done via `bcryptjs` with `12` rounds. Max length checks reject strings >72 characters (preventing bcrypt truncation bypass).
-2. **Access Token Lifespan**: Access tokens are kept in-memory and expire in 15 minutes.
-3. **HTTP-Only Cookies**: Long-lived refresh tokens are stored in cookies with `httpOnly: true` (blocks XSS token extraction), `secure: true` (only over HTTPS), and `sameSite: 'strict'` (blocks CSRF cross-origin submits).
-4. **Refresh Token Rotation (RTR)**: Each token exchange invalidates the old token. If a token is reused (indicating a stolen token replay), the system immediately revokes all active sessions for that user.
-5. **Optimistic Concurrency Control (OCC)**: Handled via the `version` column. Prevents the "lost update" problem where concurrent updates overwrite each other.
-6. **Self-Demotion Safety Check**: Admins cannot demote themselves, preventing locks.
+The easiest way to spin up the complete environment is through Docker Compose.
+
+### Prerequisites
+
+* Docker Desktop
+
+### Start Services
+
+```bash
+docker compose up --build
+```
+
+After startup:
+
+Frontend:
+
+```text
+http://localhost:3000
+```
+
+Backend API:
+
+```text
+http://localhost:5000/api/v1
+```
+
+Swagger Documentation:
+
+```text
+http://localhost:5000/api-docs
+```
+
+---
+
+# 🛠️ Local Setup
+
+## Backend Setup
+
+```bash
+cd backend
+npm install
+```
+
+Create a `.env` file:
+
+```env
+PORT=5000
+NODE_ENV=development
+DATABASE_URL="file:./dev.db"
+
+JWT_ACCESS_SECRET="your_access_secret"
+JWT_REFRESH_SECRET="your_refresh_secret"
+```
+
+Generate Prisma Client:
+
+```bash
+npx prisma generate
+```
+
+Run Migrations:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+Seed Database:
+
+```bash
+npx prisma db seed
+```
+
+Start Backend:
+
+```bash
+npm run dev
+```
+
+---
+
+## Frontend Setup
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+---
+
+# 🔒 Security Features
+
+## Password Hashing
+
+* bcryptjs
+* 12 Salt Rounds
+* Protection against bcrypt truncation attacks
+
+## JWT Strategy
+
+* Short-Lived Access Tokens
+* Long-Lived Refresh Tokens
+* Refresh Token Rotation
+
+## Cookie Security
+
+* HTTP-Only Cookies
+* Secure Cookies
+* SameSite Protection
+
+## Rate Limiting
+
+Login Endpoint:
+
+```text
+10 requests/minute
+```
+
+Registration Endpoint:
+
+```text
+5 requests/minute
+```
+
+## Optimistic Concurrency Control
+
+A version column is maintained for tasks to prevent lost updates during concurrent modifications.
+
+---
+
+# 📚 API Documentation
+
+Swagger UI is available at:
+
+https://rbac-shield.onrender.com/api-docs
+
+The documentation includes:
+
+* Authentication APIs
+* User APIs
+* Task APIs
+* Request Schemas
+* Response Schemas
+* Error Responses
+
+---
+
+# 📈 Scalability Considerations
+
+This repository includes a dedicated scalability roadmap covering:
+
+* Redis Caching
+* Database Connection Pooling
+* Read Replicas
+* PgBouncer
+* Microservice Decomposition
+* Horizontal Scaling
+* Cache Invalidation Strategies
+
+See:
+
+```text
+SCALABILITY.md
+```
+
+for detailed discussion.
+
+---
+
+# 🎓 Key Learning Outcomes
+
+Through this project I gained practical experience with:
+
+* Authentication vs Authorization
+* Role-Based Access Control (RBAC)
+* JWT Session Management
+* Refresh Token Rotation
+* Secure Cookie Handling
+* Prisma ORM
+* PostgreSQL Database Design
+* API Validation
+* Rate Limiting
+* Optimistic Concurrency Control
+* Swagger Documentation
+* CORS Configuration
+* Production Deployment
+* Environment Variable Management
+* Git-Based CI/CD Workflows
+* Debugging Real-World Deployment Issues
+
+---
+
+# 🚀 Future Improvements
+
+* Email Verification
+* Password Reset Flow
+* Audit Logging
+* Fine-Grained Permissions
+* Team-Based Access Control
+* Redis Session Storage
+* WebSocket Notifications
+* Activity Monitoring
+* Analytics Dashboard
+
+---
+
+## 👨‍💻 Author
+
+**Shoaib Ahamad Mev**
+
+Computer Science Engineer | Backend Developer | Full-Stack Developer
+
+* GitHub: https://github.com/Shoaib-ahamad
+
+* LinkedIn: https://www.linkedin.com/in/shoaib-ahamad-mev/
+
+---
+
+If you found this project useful, feel free to explore the codebase, review the architecture, and provide feedback.
